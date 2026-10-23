@@ -1,6 +1,26 @@
-target/
+# IntelliJ
 .idea/
-.vscode/
 *.iml
+
+# Build
+.gradle/
+build/
+target/
+out/
+.vscode/
+
+# Secrets
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
 
