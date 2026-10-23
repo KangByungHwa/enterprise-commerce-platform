@@ -1,0 +1,33 @@
+spring:
+  application.name: commerce-logistics
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/commerce?useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USER:commerce}
+    password: ${DB_PASSWORD:commerce}
+  jpa:
+    open-in-view: false
+    hibernate.ddl-auto: validate
+  flyway.enabled: true
+  data:
+    redis.host: ${REDIS_HOST:localhost}
+    redis.port: ${REDIS_PORT:6379}
+    mongodb.uri: ${MONGODB_URI:mongodb://commerce:commerce@localhost:27017/logistics?authSource=admin}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+        acks: all
+management:
+  endpoints.web.exposure.include: health,info,prometheus
+  endpoint.health.probes.enabled: true
+app:
+  kafka.order-topic: order.created.v1
+  outbox.interval-ms: 1000
+

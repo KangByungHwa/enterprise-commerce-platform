@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: commerce-logistics}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: commerce-logistics}}
+  template:
+    metadata: {labels: {app: commerce-logistics}}
+    spec:
+      securityContext: {runAsNonRoot: true}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      containers:
+        - name: app
+          image: ghcr.io/YOUR_ORG/commerce-logistics:latest
+          ports: [{name: http, containerPort: 8080}]
+          envFrom:
+            - configMapRef: {name: commerce-logistics-config}
+            - secretRef: {name: commerce-logistics-secret}
+          readinessProbe: {httpGet: {path: /actuator/health/readiness, port: http}, initialDelaySeconds: 20, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /actuator/health/liveness, port: http}, initialDelaySeconds: 40, periodSeconds: 15}
+          resources:
+            requests: {cpu: 200m, memory: 384Mi}
+            limits: {cpu: '1', memory: 768Mi}
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: ["ALL"]}}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+
